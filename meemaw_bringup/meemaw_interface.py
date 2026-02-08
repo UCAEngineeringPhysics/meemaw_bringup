@@ -11,9 +11,9 @@ import serial
 from math import sin, cos, pi
 
 
-class HomerInterface(Node):
+class MeemawInterface(Node):
     def __init__(self):
-        super().__init__("homer_interface")
+        super().__init__("meemaw_interface")
         # Create serial communication to Pico
         self.pico_msngr = serial.Serial("/dev/ttyACM0", 115200, timeout=1)
         self.listen_pico_msg_timer = self.create_timer(0.015, self.listen_pico_msg)
@@ -43,7 +43,7 @@ class HomerInterface(Node):
         self.curr_ts = self.get_clock().now()
         # constants
         self.GROUND_CLEARANCE = 0.0325
-        self.get_logger().info("HomeR is up.")
+        self.get_logger().info("Meemaw is up.")
 
     def listen_pico_msg(self):
         if self.pico_msngr.inWaiting() > 0:
@@ -53,7 +53,7 @@ class HomerInterface(Node):
             if len(vels) == 2:
                 self.lin_vel = float(vels[0])
                 self.ang_vel = float(vels[1])
-        self.get_logger().debug(
+        self.get_logger().info(
             f"Measured velocity\nlinear: {self.lin_vel}, angular: {self.ang_vel}"
         )
 
@@ -62,7 +62,7 @@ class HomerInterface(Node):
         targ_ang = msg.angular.z
         self.pico_msngr.write(f"{targ_lin},{targ_ang}\n".encode("utf-8"))
         self.get_logger().debug(
-            f"Set HomeR's target velocity\nlinear: {targ_lin}, angular: {targ_ang}"
+            f"Set MeeMaw's target velocity\nlinear: {targ_lin}, angular: {targ_ang}"
         )
 
     def publish_odom(self):
@@ -112,9 +112,9 @@ class HomerInterface(Node):
 
 def main(args=None):
     rclpy.init(args=args)
-    homer_interface = HomerInterface()
-    rclpy.spin(homer_interface)
-    homer_interface.destroy_node()
+    meemaw_interface = MeemawInterface()
+    rclpy.spin(meemaw_interface)
+    meemaw_interface.destroy_node()
     rclpy.shutdown()
 
 

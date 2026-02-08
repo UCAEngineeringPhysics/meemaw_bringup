@@ -7,8 +7,8 @@ from math import pi
 
 
 def generate_launch_description():
-    homer_package_path = get_package_share_path("homer_bringup")
-    joy_config_path = homer_package_path / "configs/ps3.config.yaml"
+    meemaw_package_path = get_package_share_path("meemaw_bringup")
+    joy_config_path = meemaw_package_path / "configs/ps3.config.yaml"
 
     sim_time_arg = DeclareLaunchArgument(
         name="use_sim_time",
@@ -64,11 +64,13 @@ def generate_launch_description():
     )
 
     # diff_drive_node = Node(package="solid_octo", executable="diff_drive_controller")
-    homer_interface_node = Node(package="homer_bringup", executable="homer_interface")
+    meemaw_interface_node = Node(
+        package="meemaw_bringup", executable="meemaw_interface"
+    )
 
     rplidar_launch = IncludeLaunchDescription(
         PythonLaunchDescriptionSource(
-            str(homer_package_path / "launch/rplidar.launch.py")
+            str(meemaw_package_path / "launch/rplidar.launch.py")
         ),
     )
 
@@ -85,7 +87,7 @@ def generate_launch_description():
     return LaunchDescription(
         [
             sim_time_arg,
-            homer_interface_node,
+            meemaw_interface_node,
             rplidar_launch,
             launch_teleop_twist_joy,
             footprint_static_tf_node,
