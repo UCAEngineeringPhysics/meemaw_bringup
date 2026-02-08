@@ -51,8 +51,12 @@ class MeemawInterface(Node):
                 self.pico_msngr.readline().decode("utf-8", "ignore").strip().split(",")
             )  # actual linear and angular vel
             if len(vels) == 2:
-                self.lin_vel = float(vels[0])
-                self.ang_vel = float(vels[1])
+                try:
+                    self.lin_vel = float(vels[0])
+                    self.ang_vel = float(vels[1])
+                except ValueError:
+                    self.lin_vel = 0.0
+                    self.ang_vel = 0.0
         self.get_logger().info(
             f"Measured velocity\nlinear: {self.lin_vel}, angular: {self.ang_vel}"
         )
