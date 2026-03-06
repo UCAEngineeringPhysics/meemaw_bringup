@@ -3,7 +3,6 @@ from launch import LaunchDescription
 from launch.actions import DeclareLaunchArgument, IncludeLaunchDescription
 from launch_ros.actions import Node
 from launch.launch_description_sources import PythonLaunchDescriptionSource
-from math import pi
 
 
 def generate_launch_description():
@@ -40,39 +39,16 @@ def generate_launch_description():
         ],
     )
 
-    lidar_static_tf_node = Node(
-        package="tf2_ros",
-        executable="static_transform_publisher",
-        arguments=[
-            "--x",
-            "0.02",
-            "--y",
-            "0",
-            "--z",
-            "0.19",
-            "--yaw",
-            str(pi),
-            "--pitch",
-            "0",
-            "--roll",
-            "0",
-            "--frame-id",
-            "base_link",
-            "--child-frame-id",
-            "lidar_link",
-        ],
-    )
-
     camera_static_tf_node = Node(
         package="tf2_ros",
         executable="static_transform_publisher",
         arguments=[
             "--x",
-            "0.05",
+            "-0.05",
             "--y",
             "0",
             "--z",
-            "0.12",
+            "-0.12",
             "--yaw",
             "0",
             "--pitch",
@@ -80,21 +56,15 @@ def generate_launch_description():
             "--roll",
             "0",
             "--frame-id",
-            "base_link",
-            "--child-frame-id",
             "camera_link",
+            "--child-frame-id",
+            "base_link",
         ],
     )
 
     # diff_drive_node = Node(package="solid_octo", executable="diff_drive_controller")
     meemaw_interface_node = Node(
-        package="meemaw_bringup", executable="meemaw_interface"
-    )
-
-    rplidar_launch = IncludeLaunchDescription(
-        PythonLaunchDescriptionSource(
-            str(meemaw_package_path / "launch/rplidar.launch.py")
-        ),
+        package="meemaw_bringup", executable="motion_control_interface"
     )
 
     launch_teleop_twist_joy = IncludeLaunchDescription(
@@ -111,10 +81,8 @@ def generate_launch_description():
         [
             sim_time_arg,
             meemaw_interface_node,
-            # rplidar_launch,
             launch_teleop_twist_joy,
+            camera_static_tf_node,
             footprint_static_tf_node,
-            # lidar_static_tf_node,
-            # camera_static_tf_node,
         ]
     )

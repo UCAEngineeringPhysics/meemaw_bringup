@@ -1,6 +1,5 @@
 from setuptools import find_packages, setup
-import os
-from glob import glob
+from pathlib import Path
 
 package_name = "meemaw_bringup"
 
@@ -12,12 +11,12 @@ setup(
         ("share/ament_index/resource_index/packages", ["resource/" + package_name]),
         ("share/" + package_name, ["package.xml"]),
         (
-            os.path.join("share", package_name, "configs"),
-            glob(os.path.join("configs", "*.yaml")),
+            str(Path("share") / package_name / "configs"),
+            [str(file) for file in Path("configs").glob("*.yaml")],
         ),
         (
-            os.path.join("share", package_name, "launch"),
-            glob(os.path.join("launch", "*.py")),
+            str(Path("share") / package_name / "launch"),
+            [str(file) for file in Path("launch").glob("*.py")],
         ),
     ],
     install_requires=["setuptools"],
@@ -32,6 +31,9 @@ setup(
         ],
     },
     entry_points={
-        "console_scripts": ["meemaw_interface = meemaw_bringup.meemaw_interface:main"],
+        "console_scripts": [
+            "meemaw_interface = meemaw_bringup.meemaw_interface:main",
+            "motion_control_interface = meemaw_bringup.motion_control_interface:main",
+        ],
     },
 )
