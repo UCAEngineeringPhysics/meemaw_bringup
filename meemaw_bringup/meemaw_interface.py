@@ -15,7 +15,7 @@ class MeemawInterface(Node):
     def __init__(self):
         super().__init__("meemaw_interface")
         # Create serial communication to Pico
-        self.pico_msngr = serial.Serial("/dev/ttyACM0", 115200, timeout=1)
+        self.pico_msngr = serial.Serial("/dev/ttyACM0", 115200, timeout=0.01)
         self.listen_pico_msg_timer = self.create_timer(0.015, self.listen_pico_msg)
         # Create target velocity subscriber
         self.targ_vel_subr = self.create_subscription(
@@ -57,14 +57,14 @@ class MeemawInterface(Node):
                 except ValueError:
                     self.lin_vel = 0.0
                     self.ang_vel = 0.0
-        self.get_logger().info(
+        self.get_logger().debug(
             f"Measured velocity\nlinear: {self.lin_vel}, angular: {self.ang_vel}"
         )
 
     def set_targ_vel(self, msg):
         targ_lin = msg.linear.x
         targ_ang = msg.angular.z
-        self.pico_msngr.write(f"{targ_lin},{targ_ang}\n".encode("utf-8"))
+        self.pico_msngr.write(f"{targ_lin:.4f},{targ_ang:.4f}\n".encode("utf-8"))
         self.get_logger().debug(
             f"Set MeeMaw's target velocity\nlinear: {targ_lin}, angular: {targ_ang}"
         )
